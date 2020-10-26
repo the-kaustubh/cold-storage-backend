@@ -1,8 +1,9 @@
 require('dotenv').config()
 
-const express = require("express");
-const app     = express();
-const mongoose= require("mongoose");
+const express  = require("express");
+const app      = express();
+const mongoose = require("mongoose");
+const cors     = require("cors");
 
 mongoose.connect(
   process.env.DATABASE_URL,
@@ -16,6 +17,7 @@ db.on('error', (err) => console.error(err))
 db.once('open', () => console.log('Connected'))
 
 app.use(express.json())
+app.use(cors());
 
 const nodeRouter = require('./routes/nodes')
 app.use('/node', nodeRouter)

@@ -1,0 +1,29 @@
+http://localhost:3000
+GET /node/
+
+http://localhost:3000
+DELETE /node/
+
+http://localhost:3000
+POST /node/add
+{
+	 "uid": "100000",
+	 "name": "LAB1",
+	 "supply": {
+		   "mains": {
+				   "r": 0,
+					 "y": 0,
+					 "b": 0
+			 },
+		   "stabilizer": {
+				   "r": 0,
+					 "y": 0,
+					 "b": 0
+			 },
+		   "amf": {
+				   "r": 0,
+					 "y": 0,
+					 "b": 0
+			 }
+	 }
+}

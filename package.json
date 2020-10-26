@@ -10,13 +10,16 @@
   "author": "Kaustubh Murumkar",
   "license": "ISC",
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "mongodb": "^3.6.2",
     "mongoose": "^5.10.6",
-    "nodejs": "0.0.0"
+    "nodejs": "0.0.0",
+    "socket.io": "^2.3.0"
   },
   "devDependencies": {
+    "jest": "^26.5.3",
     "nodemon": "^2.0.4"
   }
 }
