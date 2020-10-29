@@ -1,20 +1,47 @@
 const express = require("express")
 const router  = express.Router()
 const User    = require('../models/users')
+const bcrypt  = require('bcrypt')
+const jwt     = require('jsonwebtoken')
 
 
-router.post('/register', (req, res) => {
-	let user;
-	console.log(req.body.user);
+router.post('/register', async (req, res) => {
 	try {
-		res.status(200).json({message: "well"});
+		const hashedPassword = await bcrypt.hash(req.body.password, 10)
+		const user = new User({
+			username: req.body.username,
+			password: hashedPassword,
+			email: req.body.email,
+			designation: req.body.designation,
+		})
+		const newUser = await user.save()
+		res.status(200).json(newUser);
 	} catch (err) {
-		res.status(500).json({message: err.message});
+		res.status(400).json({message: err.message});
 	}
 })
 
-router.post('/login', async (res, req) => {
-	  //
+router.post('/login', async (req, res) => {
+	console.log(req.body.username)
+	const user = await User.findOne({
+		username: req.body.username
+	}).exec()
+	if(user == null) {
+		return res.status(400).json({message: "Cannot Find"})
+	}
+	try {
+		if(await bcrypt.compare(req.body.password, user.password)) {
+			const data = {
+				name: user.username
+			}
+			const accessToken = jwt.sign(data, 'secretsecret')
+			res.json({accessToken: accessToken})
+		} else {
+			res.json({message: "Not Allowed"})
+		}
+	} catch (err) {
+		res.status(500).json({message: err.message})
+	}
 })
 
 module.exports = router
