@@ -9,7 +9,8 @@ mongoose.connect(
   process.env.DATABASE_URL,
   {
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
+		useFindAndModify: false
   });
 
 const db = mongoose.connection;
@@ -21,6 +22,9 @@ app.use(cors());
 
 const nodeRouter = require('./routes/nodes')
 app.use('/node', nodeRouter)
+
+const userRouter = require('./routes/users')
+app.use('/user', userRouter)
 
 const clientRouter = require('./routes/clients')
 app.use('/client', clientRouter)

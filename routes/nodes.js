@@ -21,8 +21,15 @@ router.post("/add", async (req, res) => {
   }
 })
 
-router.post("/patch", getNode, async(req, res) => {
-	// TODO
+router.post("/modify", getNode, async(req, res) => {
+	var conditions = { uid: res.node.uid };
+	var update = { $set: req.body };
+
+	console.log(conditions);
+	console.log(update);
+	let doc = await Node.findOneAndUpdate(conditions, update);
+	res.status(201).json({msg: "done"});
+
 })
 
 router.delete("/:id", async(req, res) => {
@@ -40,16 +47,17 @@ router.delete("/:id", async(req, res) => {
 })
 
 async function getNode(req, res, next) {
-  let node;
-  try {
-   node = await Node.find({"uid": req.params.uid})
-   if(node == null) {
-     return res.status(404).json({ message: 'Cannot Find Node'})
-   }
-  } catch {
-   return res.status(404).json({ message: err.message})
-  }
-  res.node = node;
-  next()
+	let node;
+	try {
+		node = await Node.find({"uid": req.body.uid})
+		if(node == null) {
+			return res.status(404).json({ message: 'Cannot Find Node'})
+		}
+	} catch {
+		return res.status(404).json({ message: err.message})
+	}
+	res.node = node[0];
+	console.log(res.node);
+	next()
 }
 module.exports = router
