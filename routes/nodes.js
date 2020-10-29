@@ -25,11 +25,12 @@ router.post("/modify", getNode, async(req, res) => {
 	var conditions = { uid: res.node.uid };
 	var update = { $set: req.body };
 
-	console.log(conditions);
-	console.log(update);
-	let doc = await Node.findOneAndUpdate(conditions, update);
-	res.status(201).json({msg: "done"});
-
+	try {
+		let newNode = await Node.findOneAndUpdate(conditions, update);
+		res.status(201).json({node: newNode});
+	} catch (err) {
+		res.status(404).json({message: err.message})
+	}
 })
 
 router.delete("/:id", async(req, res) => {
@@ -57,7 +58,6 @@ async function getNode(req, res, next) {
 		return res.status(404).json({ message: err.message})
 	}
 	res.node = node[0];
-	console.log(res.node);
 	next()
 }
 module.exports = router
