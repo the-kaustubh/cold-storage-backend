@@ -4,7 +4,6 @@ const User    = require('../models/users')
 const bcrypt  = require('bcrypt')
 const jwt     = require('jsonwebtoken')
 
-
 router.post('/register', async (req, res) => {
 	try {
 		const hashedPassword = await bcrypt.hash(req.body.password, 10)
@@ -34,7 +33,7 @@ router.post('/login', async (req, res) => {
 			const data = {
 				name: user.username
 			}
-			const accessToken = jwt.sign(data, 'secretsecret')
+			const accessToken = jwt.sign(data, process.env.ACCESS_TOKEN_SECRET)
 			res.json({accessToken: accessToken})
 		} else {
 			res.json({message: "Not Allowed"})

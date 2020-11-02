@@ -1,21 +1,37 @@
 const express = require("express")
 const router  = express.Router()
 const Node    = require('../models/nodes')
+const Reading = require('../models/readings')
 
 router.get("/", async (req, res) => {
   try {
-   const nodes = await Node.find()
-   res.json(nodes);
+		const nodes = await Node.find()
+		res.json(nodes);
   } catch {
     res.status(500).json({ message: err.message })
   }
 })
 
+router.get("/readings", async (req, res) => {
+	try {
+		const readings = await Reading.find();
+		res.json(readings);
+	} catch (er) {
+		res.status(500).json({message: er.message})
+	}
+})
+
 router.post("/add", async (req, res) => {
   const node = new Node(req.body);
+	const reading = new Reading(req.body);
   try {
+		
     const newNode = await node.save()
-    res.status(201).json(newNode);
+		const newReading = await reading.save()
+		res.status(201).json({
+			"node": newNode,
+			"reading": newReading
+		});
   } catch (err) {
     res.status(400).json({ message: err.message })
   }

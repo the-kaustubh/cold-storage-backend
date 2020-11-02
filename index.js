@@ -29,5 +29,8 @@ app.use('/user', userRouter)
 const clientRouter = require('./routes/clients')
 app.use('/client', clientRouter)
 
-app.listen(process.env.PORT, () => console.log("Server Started"))
+const readingRouter = require('./routes/readings')
+app.use('/reading', readingRouter)
+
+app.listen(3000, () => console.log("Server Started"))
 
