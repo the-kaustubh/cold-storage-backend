@@ -33,5 +33,5 @@ app.use('/client', clientRouter)
 const readingRouter = require('./routes/readings')
 app.use('/reading', readingRouter)
 
-app.listen(3000, () => console.log("Server Started"))
+app.listen(process.env.PORT || 3000, () => console.log("Server Started"))
 
