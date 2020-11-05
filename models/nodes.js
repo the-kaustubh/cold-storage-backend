@@ -16,6 +16,11 @@ const nodeSchema = new mongoose.Schema( {
 		type: String,
 		required: true,
 		default: " "
+	},
+	user: {
+		type:String,
+		required: true,
+		default: " "
 	}
 })
 

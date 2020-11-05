@@ -3,9 +3,19 @@ const router  = express.Router()
 const Node    = require('../models/nodes')
 const Reading = require('../models/readings')
 
+function extend(target) {
+    var sources = [].slice.call(arguments, 1);
+    sources.forEach(function (source) {
+        for (var prop in source) {
+            target[prop] = source[prop];
+        }
+    });
+    return target;
+}
+
 router.get("/", async (req, res) => {
   try {
-		const nodes = await Node.find()
+		let nodes = await Node.find()
 		res.json(nodes);
   } catch {
     res.status(500).json({ message: err.message })
@@ -18,6 +28,15 @@ router.get("/readings", async (req, res) => {
 		res.json(readings);
 	} catch (er) {
 		res.status(500).json({message: er.message})
+	}
+})
+
+router.get('/readings/:uid', async (req, res) => {
+	try {
+		const reading = await Reading.findOne({uid: req.params.uid});
+		res.json(reading);
+	} catch (err) {
+		res.status(500).json({message: err.message})
 	}
 })
 
@@ -49,11 +68,19 @@ router.post("/modify", getNode, async(req, res) => {
 	}
 })
 
-router.delete("/:id", async(req, res) => {
+router.delete("/:uid", async(req, res) => {
 	 try {
-		 Node.deleteOne({_id: req.params.id}, function (err) {
-			 if (err)
+		 const tbd = await Node.findOne({uid: req.params.uid})
+		 console.log(tbd.uid)
+		 Reading.deleteMany({ uid: tbd.uid}, (err) => {
+			 if (err) {
 				 return res.status(500).json({message: err.message});
+			 }
+		 })
+		 Node.deleteOne({uid: tbd.uid}, function (err) {
+			 if (err) {
+				 return res.status(500).json({message: err.message});
+			 }
 		 });
 		 res.status(200).json({
 			   message: "Deleted Successfully"
