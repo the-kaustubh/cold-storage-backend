@@ -11,6 +11,7 @@ router.post('/register', async (req, res) => {
 			username: req.body.username,
 			password: hashedPassword,
 			email: req.body.email,
+			institute: req.body.institute,
 			designation: req.body.designation,
 		})
 		const newUser = await user.save()
@@ -23,7 +24,9 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
 	console.log(req.body)
 	const user = await User.findOne({
-		username: req.body.username
+		username: req.body.username,
+		institute: req.body.institute,
+		designation: req.body.designation
 	}).exec()
 	if(user == null) {
 		return res.status(400).json({message: "Cannot Find"})
@@ -31,7 +34,8 @@ router.post('/login', async (req, res) => {
 	try {
 		if(await bcrypt.compare(req.body.password, user.password)) {
 			const data = {
-				name: user.username
+				name: user.username,
+
 			}
 			const accessToken = jwt.sign(data, process.env.ACCESS_TOKEN_SECRET)
 			res.json({accessToken: accessToken})
