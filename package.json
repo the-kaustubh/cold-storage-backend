@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha",
-    "start": "node index.js"
+    "start": "nodemon index.js"
   },
   "author": "Kaustubh Murumkar",
   "license": "ISC",
@@ -25,6 +25,6 @@
     "chai-http": "^4.3.0",
     "jest": "^26.5.3",
     "mocha": "^8.2.1",
-    "nodemon": "^2.0.4"
+    "nodemon": "^2.0.6"
   }
 }

@@ -2,6 +2,7 @@ const express = require("express")
 const router  = express.Router()
 const Node    = require('../models/nodes')
 const Reading = require('../models/readings')
+const authenticateToken = require('../authToken')
 
 function extend(target) {
     var sources = [].slice.call(arguments, 1);
@@ -13,9 +14,10 @@ function extend(target) {
     return target;
 }
 
-router.get("/", async (req, res) => {
+router.get("/", authenticateToken, async (req, res) => {
   try {
-		let nodes = await Node.find()
+		console.log(req.user)
+		let nodes = await Node.find({user: req.user.username})
 		res.json(nodes);
   } catch {
     res.status(500).json({ message: err.message })

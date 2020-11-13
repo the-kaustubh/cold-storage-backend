@@ -22,11 +22,8 @@ router.post('/register', async (req, res) => {
 })
 
 router.post('/login', async (req, res) => {
-	console.log(req.body)
 	const user = await User.findOne({
 		username: req.body.username,
-		institute: req.body.institute,
-		designation: req.body.designation
 	}).exec()
 	if(user == null) {
 		return res.status(400).json({message: "Cannot Find"})
@@ -34,9 +31,13 @@ router.post('/login', async (req, res) => {
 	try {
 		if(await bcrypt.compare(req.body.password, user.password)) {
 			const data = {
-				name: user.username,
-
+				username: user.username,
+				institute: user.institute,
+				designation: user.designation
 			}
+			console.log("--")
+			console.log(data)
+			console.log("--")
 			const accessToken = jwt.sign(data, process.env.ACCESS_TOKEN_SECRET)
 			res.json({accessToken: accessToken})
 		} else {
