@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const nodeSchema = new mongoose.Schema( {
 	uid: {
@@ -22,6 +22,6 @@ const nodeSchema = new mongoose.Schema( {
 		required: true,
 		default: " "
 	}
-})
+});
 
-module.exports = mongoose.model('node', nodeSchema);
+module.exports = mongoose.model("node", nodeSchema);

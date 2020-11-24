@@ -1,16 +1,16 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const voltageSchema = new mongoose.Schema( {
 	r: Number,
 	y: Number,
 	b: Number
-})
+});
 
 const supplySchema = new mongoose.Schema({
 	mains: voltageSchema,
 	stabilizer: voltageSchema,
 	amf: voltageSchema
-})
+});
 
 const readingSchema = new mongoose.Schema( {
 	uid: {
@@ -57,6 +57,6 @@ const readingSchema = new mongoose.Schema( {
 			default: 0
 		}
 	}
-})
+});
 
-module.exports = mongoose.model('readings', readingSchema);
+module.exports = mongoose.model("readings", readingSchema);

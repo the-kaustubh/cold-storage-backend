@@ -1,62 +1,66 @@
-const express = require("express")
-const router  = express.Router()
-const Node    = require('../models/nodes')
-const Reading = require('../models/readings')
-const authenticateToken = require('../authToken')
+const express = require("express");
+const router  = express.Router();
+const Node    = require("../models/nodes");
+const Reading = require("../models/readings");
+const authenticateToken = require("../authToken");
 
-function extend(target) {
-    var sources = [].slice.call(arguments, 1);
-    sources.forEach(function (source) {
-        for (var prop in source) {
-            target[prop] = source[prop];
-        }
-    });
-    return target;
-}
+// function extend(target) {
+//     var sources = [].slice.call(arguments, 1);
+//     sources.forEach(function (source) {
+//         for (var prop in source) {
+//             target[prop] = source[prop];
+//         }
+//     });
+//     return target;
+// }
 
 router.get("/", authenticateToken, async (req, res) => {
-  try {
-		console.log(req.user)
-		let nodes = await Node.find({user: req.user.username})
+	try {
+		console.log(req.user);
+		let nodes = await Node.find({user: req.user.username});
 		res.json(nodes);
-  } catch {
-    res.status(500).json({ message: err.message })
-  }
-})
+	} catch(err) {
+		res.status(500).json({ message: err.message });
+	}
+});
 
-router.get("/readings", async (req, res) => {
+router.get("/readings", authenticateToken, async (req, res) => {
+	console.log(req.user);
 	try {
 		const readings = await Reading.find();
 		res.json(readings);
 	} catch (er) {
-		res.status(500).json({message: er.message})
+		res.status(500).json({message: er.message});
 	}
-})
+});
 
-router.get('/readings/:uid', async (req, res) => {
+router.get("/readings/:uid", authenticateToken, async (req, res) => {
 	try {
 		const reading = await Reading.findOne({uid: req.params.uid});
 		res.json(reading);
 	} catch (err) {
-		res.status(500).json({message: err.message})
+		res.status(500).json({message: err.message});
 	}
-})
+});
 
-router.post("/add", async (req, res) => {
-  const node = new Node(req.body);
+router.post("/add", authenticateToken, async (req, res) => {
+	const node = new Node(req.body);
 	const reading = new Reading(req.body);
-  try {
+	try {
 		
-    const newNode = await node.save()
-		const newReading = await reading.save()
+		if(req.user.designation == "maintenance") {
+			throw new Error("Maintenance is not allowed to add nodes.");
+		}
+		const newNode = await node.save();
+		const newReading = await reading.save();
 		res.status(201).json({
 			"node": newNode,
 			"reading": newReading
 		});
-  } catch (err) {
-    res.status(400).json({ message: err.message })
-  }
-})
+	} catch (err) {
+		res.status(400).json({ message: err.message });
+	}
+});
 
 router.post("/modify", getNode, async(req, res) => {
 	var conditions = { uid: res.node.uid };
@@ -66,19 +70,19 @@ router.post("/modify", getNode, async(req, res) => {
 		let newNode = await Node.findOneAndUpdate(conditions, update);
 		res.status(201).json({node: newNode});
 	} catch (err) {
-		res.status(404).json({message: err.message})
+		res.status(404).json({message: err.message});
 	}
-})
+});
 
 router.delete("/:uid", async(req, res) => {
 	 try {
-		 const tbd = await Node.findOne({uid: req.params.uid})
-		 console.log(tbd.uid)
+		 const tbd = await Node.findOne({uid: req.params.uid});
+		 console.log(tbd.uid);
 		 Reading.deleteMany({ uid: tbd.uid}, (err) => {
 			 if (err) {
 				 return res.status(500).json({message: err.message});
 			 }
-		 })
+		 });
 		 Node.deleteOne({uid: tbd.uid}, function (err) {
 			 if (err) {
 				 return res.status(500).json({message: err.message});
@@ -90,19 +94,19 @@ router.delete("/:uid", async(req, res) => {
 	 } catch (err) {
 		 res.status(503).json({message: err.message});
 	 }
-})
+});
 
 async function getNode(req, res, next) {
 	let node;
 	try {
-		node = await Node.find({"uid": req.body.uid})
+		node = await Node.find({"uid": req.body.uid});
 		if(node == null) {
-			return res.status(404).json({ message: 'Cannot Find Node'})
+			return res.status(404).json({ message: "Cannot Find Node"});
 		}
-	} catch {
-		return res.status(404).json({ message: err.message})
+	} catch(err) {
+		return res.status(404).json({ message: err.message});
 	}
 	res.node = node[0];
-	next()
+	next();
 }
-module.exports = router
+module.exports = router;

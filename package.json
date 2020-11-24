@@ -6,7 +6,8 @@
   "scripts": {
     "test": "mocha",
     "start": "node index.js",
-		"dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+		"lint": "eslint ./ --fix"
   },
   "author": "Kaustubh Murumkar",
   "license": "ISC",
@@ -24,8 +25,11 @@
   "devDependencies": {
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
+    "eslint": "^7.14.0",
     "jest": "^26.5.3",
     "mocha": "^8.2.1",
-    "nodemon": "^2.0.6"
+    "nodemon": "^2.0.6",
+    "superagent": "^6.1.0",
+    "supertest": "^6.0.1"
   }
 }
