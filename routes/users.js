@@ -35,11 +35,8 @@ router.post("/login", async (req, res) => {
 				institute: user.institute,
 				designation: user.designation
 			};
-			console.log("--");
-			console.log(data);
-			console.log("--");
 			const accessToken = jwt.sign(data, process.env.ACCESS_TOKEN_SECRET);
-			res.json({accessToken: accessToken});
+			res.json({accessToken: accessToken, designation: user.designation});
 		} else {
 			res.json({message: "Not Allowed"});
 		}

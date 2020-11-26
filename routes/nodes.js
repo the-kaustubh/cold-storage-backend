@@ -16,8 +16,13 @@ const authenticateToken = require("../authToken");
 
 router.get("/", authenticateToken, async (req, res) => {
 	try {
-		console.log(req.user);
-		let nodes = await Node.find({user: req.user.username});
+		let nodes;
+		if(req.user.designation === 'maintenance') {
+			console.log(req.user.designation)
+			nodes = await Node.find({location: req.user.institute});
+		} else {
+			nodes = await Node.find({user: req.user.username});
+		}
 		res.json(nodes);
 	} catch(err) {
 		res.status(500).json({ message: err.message });
@@ -25,7 +30,6 @@ router.get("/", authenticateToken, async (req, res) => {
 });
 
 router.get("/readings", authenticateToken, async (req, res) => {
-	console.log(req.user);
 	try {
 		const readings = await Reading.find();
 		res.json(readings);
@@ -44,6 +48,7 @@ router.get("/readings/:uid", authenticateToken, async (req, res) => {
 });
 
 router.post("/add", authenticateToken, async (req, res) => {
+	req.body.user = req.user.username;
 	const node = new Node(req.body);
 	const reading = new Reading(req.body);
 	try {
@@ -62,21 +67,31 @@ router.post("/add", authenticateToken, async (req, res) => {
 	}
 });
 
-router.post("/modify", getNode, async(req, res) => {
-	var conditions = { uid: res.node.uid };
-	var update = { $set: req.body };
+// router.post("/modify", getNode, async(req, res) => {
+// 	var conditions = { uid: res.node.uid };
+// 	var update = { $set: req.body };
 
-	try {
-		let newNode = await Node.findOneAndUpdate(conditions, update);
-		res.status(201).json({node: newNode});
-	} catch (err) {
-		res.status(404).json({message: err.message});
-	}
-});
+// 	try {
+// 		let newNode = await Node.findOneAndUpdate(conditions, update);
+// 		res.status(201).json({node: newNode});
+// 	} catch (err) {
+// 		res.status(404).json({message: err.message});
+// 	}
+// });
 
-router.delete("/:uid", async(req, res) => {
+router.delete("/:uid", authenticateToken, async(req, res) => {
 	 try {
-		 const tbd = await Node.findOne({uid: req.params.uid});
+		 let tbd;
+		 if( req.user.designation == 'admin' ) {
+			 tbd = await Node.findOne({
+				 uid: req.params.uid
+			 });
+		 } else {
+			 tbd = await Node.findOne({
+				 uid: req.params.uid,
+				 user: req.user.username
+			 });
+		 }
 		 console.log(tbd.uid);
 		 Reading.deleteMany({ uid: tbd.uid}, (err) => {
 			 if (err) {
