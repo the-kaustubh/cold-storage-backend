@@ -17,8 +17,8 @@ const authenticateToken = require("../authToken");
 router.get("/", authenticateToken, async (req, res) => {
 	try {
 		let nodes;
-		if(req.user.designation === 'maintenance') {
-			console.log(req.user.designation)
+		if(req.user.designation === "maintenance") {
+			console.log(req.user.designation);
 			nodes = await Node.find({location: req.user.institute});
 		} else {
 			nodes = await Node.find({user: req.user.username});
@@ -63,6 +63,9 @@ router.post("/add", authenticateToken, async (req, res) => {
 			"reading": newReading
 		});
 	} catch (err) {
+		if(process.env.test) {
+			console.log(err);
+		}
 		res.status(400).json({ message: err.message });
 	}
 });
@@ -82,7 +85,7 @@ router.post("/add", authenticateToken, async (req, res) => {
 router.delete("/:uid", authenticateToken, async(req, res) => {
 	 try {
 		 let tbd;
-		 if( req.user.designation == 'admin' ) {
+		 if( req.user.designation == "admin" ) {
 			 tbd = await Node.findOne({
 				 uid: req.params.uid
 			 });
@@ -92,7 +95,6 @@ router.delete("/:uid", authenticateToken, async(req, res) => {
 				 user: req.user.username
 			 });
 		 }
-		 console.log(tbd.uid);
 		 Reading.deleteMany({ uid: tbd.uid}, (err) => {
 			 if (err) {
 				 return res.status(500).json({message: err.message});
@@ -107,21 +109,24 @@ router.delete("/:uid", authenticateToken, async(req, res) => {
 			   message: "Deleted Successfully"
 		 });
 	 } catch (err) {
+		if(process.env.test) {
+			console.log(err);
+		}
 		 res.status(503).json({message: err.message});
 	 }
 });
 
-async function getNode(req, res, next) {
-	let node;
-	try {
-		node = await Node.find({"uid": req.body.uid});
-		if(node == null) {
-			return res.status(404).json({ message: "Cannot Find Node"});
-		}
-	} catch(err) {
-		return res.status(404).json({ message: err.message});
-	}
-	res.node = node[0];
-	next();
-}
+// async function getNode(req, res, next) {
+// 	let node;
+// 	try {
+// 		node = await Node.find({"uid": req.body.uid});
+// 		if(node == null) {
+// 			return res.status(404).json({ message: "Cannot Find Node"});
+// 		}
+// 	} catch(err) {
+// 		return res.status(404).json({ message: err.message});
+// 	}
+// 	res.node = node[0];
+// 	next();
+// }
 module.exports = router;

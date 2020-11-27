@@ -6,17 +6,61 @@ const { expect } = chai
 
 chai.use(chaiHttp)
 
+const mockUser = {
+	username: 'kaustubh',
+	email: 'kaustubh.murumkar@gmail.com',
+	password: 'blahblah',
+	institute: 'jsom',
+	designation: 'user'
+}
+
 let accTok = ''
 
-describe("users", () => {
-	// Create user
-	const mockUser = {
-		username: 'kaustubh',
-		email: 'kaustubh.murumkar@gmail.com',
-		password: 'blahblah',
-		institute: 'jsom',
-		designation: 'maintenance'
+const mockNode = {
+	"uid": "100000",
+	"location": "jsom",
+	"name": "ups",
+	"supply": {
+		"mains": {
+			"r": "0",
+			"y": "0",
+			"b": "0"
+		},
+		"amf": {
+			"r": "0",
+			"y": "0",
+			"b": "0"
+		},
+		"stabilizer": {
+			"r": "0",
+			"y": "0",
+			"b": "0"
+		}
 	}
+}
+
+describe("construct users", () => {
+	// User should not exist
+	describe("POST /user/login", () => {
+		it("should return a error message", done => {
+			chai
+				.request(app)
+				.post('/user/login')
+				.send({
+					username: mockUser.username,
+					password: mockUser.password
+				})
+				.end((err, res) => {
+					if (err) done(err)
+					expect(res).to.have.status(400)
+					expect(res.body).to.be.an('object')
+					expect(res.body).to.have.property('message')
+					done()
+				})
+		})
+	})
+
+	// Create user
 	describe("POST /user/register", () => {
 		it("should create new user", (done) => {
 			chai
@@ -125,7 +169,82 @@ describe("nodes", () => {
 				.end((err, res) => {
 					if (err) done(err)
 					expect(res).to.have.status(200)
+					expect(res.body).to.be.an('array').that.is.empty
+					done()
+				})
+		})
+	})
+
+	describe("POST /node/add", () => {
+		it("should add a new node", done => {
+			chai
+				.request(app)
+				.post("/node/add")
+				.send(mockNode)
+				.set({
+					'Authorization': 'Bearer ' + accTok
+				})
+				.end((err, res) => {
+					if(err) done(err)
+					expect(res).to.have.status(201)
+					expect(res.body).to.be.an('object')
+					expect(res.body).to.have.property('node')
+					expect(res.body).to.have.property('reading')
+					expect(res.body.node).to.have.property('user')
+					expect(res.body.node.user).to.equal(mockUser.username)
+					done()
+				})
+		})
+	})
+
+	describe("GET /node", () => {
+		it("should return previously added node", (done) => {
+			chai
+				.request(app)
+				.get("/node")
+				.set({
+					'Authorization': 'Bearer ' + accTok
+				})
+				.end((err, res) => {
+					if (err) done(err)
+					expect(res).to.have.status(200)
 					expect(res.body).to.be.an('array')
+					expect(res.body.length).to.equal(1)
+					done()
+				})
+		})
+	})
+
+	describe("DELETE /node/uid", () => {
+		it("should delete the created node", done => {
+			chai
+				.request(app)
+				.delete("/node/"+mockNode.uid)
+				.set({
+					'Authorization': 'Bearer ' + accTok
+				})
+				.end((err, res) => {
+					if(err) done(err)
+					expect(res).to.have.status(200)
+					expect(res.body).to.have.property("message")
+					expect(res.body.message).to.equal("Deleted Successfully")
+					done()
+				})
+		})
+	})
+
+	describe("GET /node", () => {
+		it("should again return empty array", (done) => {
+			chai
+				.request(app)
+				.get("/node")
+				.set({
+					'Authorization': 'Bearer ' + accTok
+				})
+				.end((err, res) => {
+					if (err) done(err)
+					expect(res).to.have.status(200)
+					expect(res.body).to.be.an('array').that.is.empty
 					done()
 				})
 		})

@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "env DATABASE_URL=mongodb://localhost/nodes mocha --timeout 60000 --exit",
+    "test": "mocha --timeout 6000 --exit",
     "start": "node index.js",
     "dev": "nodemon index.js",
 		"lint": "eslint ./ --fix"
