@@ -17,11 +17,10 @@ const authenticateToken = require("../authToken");
 router.get("/", authenticateToken, async (req, res) => {
 	try {
 		let nodes;
-		if(req.user.designation === "maintenance") {
-			console.log(req.user.designation);
-			nodes = await Node.find({location: req.user.institute});
-		} else {
+		if(req.user.designation === "user") {
 			nodes = await Node.find({user: req.user.username});
+		} else {
+			nodes = await Node.find({location: req.user.institute});
 		}
 		res.json(nodes);
 	} catch(err) {
