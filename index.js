@@ -33,6 +33,10 @@ app.use("/client", clientRouter);
 const readingRouter = require("./routes/readings");
 app.use("/reading", readingRouter);
 
+app.get('/', (req, res) => {
+	res.json({msg: "Server Up"})
+})
+
 app.listen(process.env.PORT || 3000, () => console.log("Server Started"));
 
 module.exports = app;
