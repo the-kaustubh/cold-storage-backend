@@ -1,7 +1,11 @@
 sudo: false
 
 language: node_js
-services: mongodb
+services: 
+  - mongodb
+
+before_script:
+  - sleep 15
 
 node_js:
   - node
