@@ -1,0 +1,23 @@
+sudo: false
+
+language: node_js
+services: 
+  - mongodb
+
+env:
+  - DATABASE_URL=mongodb://localhost/nodes ACCESS_TOKEN_SECRET=lolnosecret
+
+before_script:
+  - sleep 15
+
+node_js:
+  - node
+
+install:
+  - npm ci
+
+script:
+  - npm test
+
+notifications:
+  email: false
