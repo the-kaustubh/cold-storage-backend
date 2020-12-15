@@ -16,7 +16,6 @@ const readingSchema = new mongoose.Schema( {
 	uid: {
 		type: String,
 		required: true,
-		unique: true,
 		default: 0
 	},
 	datetime: {
