@@ -1,7 +1,15 @@
 const express = require("express");
 const router  = express.Router();
 const Node    = require("../models/nodes");
-const Reading = require("../models/readings");
+
+// const Voltage = require("../models/getVoltage.js");
+// const DG = require("../models/getDG.js");
+// const Freezer = require("../models/getFreezer.js");
+
+const getDG = require("../getDG.js");
+const getFreezer = require("../getFreezer.js");
+const getVoltage = require("../getVoltage.js");
+
 const authenticateToken = require("../authToken");
 
 // function extend(target) {
@@ -30,17 +38,21 @@ router.get("/", authenticateToken, async (req, res) => {
 
 router.get("/readings", authenticateToken, async (req, res) => {
 	try {
-		const readings = await Reading.find();
-		res.json(readings);
 	} catch (er) {
 		res.status(500).json({message: er.message});
 	}
 });
 
 router.get("/readings/:uid", authenticateToken, async (req, res) => {
+	const UID = req.params.uid;
 	try {
-		const reading = await Reading.findOne({uid: req.params.uid});
-		res.json(reading);
+		const dg = await getDG(UID);
+		const freezer = await getFreezer(UID);
+		const voltage = await getVoltage(UID);
+
+		const intermediate = Object.assign({}, dg, freezer);
+		const response = Object.assign({}, voltage, intermediate);
+		res.status(200).json(response);
 	} catch (err) {
 		res.status(500).json({message: err.message});
 	}

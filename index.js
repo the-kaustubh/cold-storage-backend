@@ -30,8 +30,8 @@ app.use("/user", userRouter);
 const clientRouter = require("./routes/clients");
 app.use("/client", clientRouter);
 
-const readingRouter = require("./routes/readings");
-app.use("/reading", readingRouter);
+const writeRouter = require("./routes/write");
+app.use("/write", writeRouter);
 
 app.get("/", (req, res) => {
 	res.json({msg: "Server Up"});

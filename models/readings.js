@@ -1,15 +1,33 @@
 const mongoose = require("mongoose");
 
 const voltageSchema = new mongoose.Schema( {
-	r: Number,
-	y: Number,
-	b: Number
+	r: {
+		type: Number,
+		required: true
+	},
+	y: {
+		type: Number,
+		required: true
+	},
+	b: {
+		type: Number,
+		required: true
+	}
 });
 
 const supplySchema = new mongoose.Schema({
-	mains: voltageSchema,
-	stabilizer: voltageSchema,
-	amf: voltageSchema
+	mains: {
+		type: voltageSchema,
+		required: true
+	},
+	stabilizer: {
+		type: voltageSchema,
+		required: true
+	},
+	amf: {
+		type: voltageSchema,
+		required: true
+	}
 });
 
 const readingSchema = new mongoose.Schema( {
