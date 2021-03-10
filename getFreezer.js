@@ -1,5 +1,5 @@
-const Freezer			= require("../models/freezer.js")
-const authenticateToken = require("../authToken");
+const Freezer			= require("./models/freezer.js")
+const authenticateToken = require("./authToken");
 
 async function getFreezer(uid) {
 	let freezer;
@@ -9,7 +9,7 @@ async function getFreezer(uid) {
 		}).sort({
 			datetime: -1
 		});
-		return freezer;
+		return freezer[0];
 	} catch( e ) {
 		console.log(e.message);
 	}

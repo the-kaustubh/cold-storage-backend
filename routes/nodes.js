@@ -12,16 +12,6 @@ const getVoltage = require("../getVoltage.js");
 
 const authenticateToken = require("../authToken");
 
-// function extend(target) {
-//     var sources = [].slice.call(arguments, 1);
-//     sources.forEach(function (source) {
-//         for (var prop in source) {
-//             target[prop] = source[prop];
-//         }
-//     });
-//     return target;
-// }
-
 router.get("/", authenticateToken, async (req, res) => {
 	try {
 		let nodes;
@@ -36,13 +26,6 @@ router.get("/", authenticateToken, async (req, res) => {
 	}
 });
 
-router.get("/readings", authenticateToken, async (req, res) => {
-	try {
-	} catch (er) {
-		res.status(500).json({message: er.message});
-	}
-});
-
 router.get("/readings/:uid", authenticateToken, async (req, res) => {
 	const UID = req.params.uid;
 	try {
@@ -50,8 +33,11 @@ router.get("/readings/:uid", authenticateToken, async (req, res) => {
 		const freezer = await getFreezer(UID);
 		const voltage = await getVoltage(UID);
 
-		const intermediate = Object.assign({}, dg, freezer);
-		const response = Object.assign({}, voltage, intermediate);
+		const response = {
+			dg: dg,
+			freezer: freezer,
+			voltage: voltage
+		}
 		res.status(200).json(response);
 	} catch (err) {
 		res.status(500).json({message: err.message});

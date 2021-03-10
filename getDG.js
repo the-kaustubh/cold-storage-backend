@@ -1,5 +1,5 @@
-const DG			= require("../models/dg")
-const authenticateToken = require("../authToken");
+const DG			= require("./models/dg")
+const authenticateToken = require("./authToken");
 
 async function getDG(uid) {
 	let dg;
@@ -9,7 +9,7 @@ async function getDG(uid) {
 		}).sort({
 			datetime: -1
 		});
-		return dg
+		return dg[0]
 	} catch( e ) {
 		console.log(e.message);
 	}
